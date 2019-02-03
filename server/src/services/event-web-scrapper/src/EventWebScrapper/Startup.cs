@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using EventWebScrapper.Repositories;
+using EventWebScrapper.Scrappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -22,13 +26,12 @@ namespace EventWebScrapper
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            registerServices(services);
+            registerDbContext(services);
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -37,12 +40,28 @@ namespace EventWebScrapper
             }
             else
             {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void registerServices(IServiceCollection services)
+        {
+            services.AddTransient<IEventScrapDataRepository, EventScrapDataRepository>();
+            services.AddTransient<IKinoAfishaScrapper, KinoAfishaScrapper>();
+        }
+
+        private void registerDbContext(IServiceCollection services)
+        {
+            var sqlConnection = Configuration["ConnectionString"];
+
+            if (string.IsNullOrWhiteSpace(sqlConnection))
+            {
+                throw new ConfigurationErrorsException("ConnectionString entry can not be found, please check appsettings");
+            }
+
+            services.AddDbContext<EventWebScrapperDbContext>(options => options.UseMySQL(sqlConnection));
         }
     }
 }

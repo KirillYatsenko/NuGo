@@ -22,7 +22,7 @@ namespace EventWebScrapper.Controllers
         public async Task<IActionResult> Scrap()
         {
             var scrapResult = await _kinoAfishaScrapper.ScrapAsync();
-            return Ok("scrapped");
+            return Ok();
         }
 
     }

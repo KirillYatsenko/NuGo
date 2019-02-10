@@ -45,9 +45,13 @@ namespace EventWebScrapper.Scrappers
                 var fullUrl = $"{_kinoAfishaUri}{relativeUrl}";
 
                 var detailsPage = await Browser.NavigateToPageAsync(new Uri(fullUrl));
+
+                var ratingString = detailsPage.Html.CssSelect("span[itemprop=ratingValue]").FirstOrDefault().InnerText;
+                var ratingNumber = Decimal.Parse(ratingString.Replace(',','.'));
+
                 var description = detailsPage.Html.CssSelect(".description").FirstOrDefault()?.InnerText;
                 var relativePhotoUrl = detailsPage.Html.CssSelect(".photo").FirstOrDefault()?.Attributes["href"].Value;
-                var fullPhotoUrl = $"{_kinoAfishaUri}{relativePhotoUrl}";
+                var fullImageUrl = $"{_kinoAfishaUri}{relativePhotoUrl}";
 
                 List<EventDate> eventDates = scrapSessions(detailsPage);
 
@@ -56,9 +60,10 @@ namespace EventWebScrapper.Scrappers
                     Title = titleHtml.InnerText,
                     Description = description,
                     DetailsUrl = fullUrl,
-                    ImageUrl = fullPhotoUrl,
+                    ImageUrl = fullImageUrl,
                     Dates = eventDates,
-                    CategoryId = (int)EventCategories.Cinema
+                    CategoryId = (int)EventCategories.Cinema,
+                    Rating = ratingNumber
                 };
 
                 scrappedData.Add(newEvent);

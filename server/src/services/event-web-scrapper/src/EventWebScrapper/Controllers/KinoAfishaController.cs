@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EventWebScrapper.Repositories;
 using EventWebScrapper.Scrappers;
+using EventWebScrapper.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,29 +11,18 @@ namespace EventWebScrapper.Controllers
     [Route("api/[controller]")]
     public class KinoAfishaController : Controller
     {
-        private readonly IEventScrapDataRepository _eventScrapDataRepository;
-        private readonly IKinoAfishaScrapper _kinoAfishaScrapper;
+        private readonly IKinoAfishaScrapperService _kinoAfishaScrapper;
 
-        public KinoAfishaController(
-            IEventScrapDataRepository eventScrapDataRepository,
-            IKinoAfishaScrapper kinoAfishaScrapper)
+        public KinoAfishaController(IKinoAfishaScrapperService kinoAfishaScrapper)
         {
-            _eventScrapDataRepository = eventScrapDataRepository;
             _kinoAfishaScrapper = kinoAfishaScrapper;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Invoke()
+        public async Task<IActionResult> Scrap()
         {
-            await _kinoAfishaScrapper.Scrap();
-            return null;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var scrapData = await _eventScrapDataRepository.Get().ToListAsync();
-            return Ok(scrapData);
+            var scrapResult = await _kinoAfishaScrapper.ScrapAsync();
+            return Ok("scrapped");
         }
 
     }

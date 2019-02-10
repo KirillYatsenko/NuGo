@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EventWebScrapper.Repositories;
 using EventWebScrapper.Scrappers;
+using EventWebScrapper.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,6 +30,8 @@ namespace EventWebScrapper
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            registerRepositories(services);
             registerServices(services);
             registerDbContext(services);
         }
@@ -46,10 +49,16 @@ namespace EventWebScrapper
             app.UseMvc();
         }
 
+        private void registerRepositories(IServiceCollection services)
+        {
+            services.AddTransient<IEventDateRepository, EventDateRepository>();
+            services.AddTransient<IEventRepository, EventRepository>();
+        }
+
         private void registerServices(IServiceCollection services)
         {
-            services.AddTransient<IEventScrapDataRepository, EventScrapDataRepository>();
             services.AddTransient<IKinoAfishaScrapper, KinoAfishaScrapper>();
+            services.AddTransient<IKinoAfishaScrapperService, KinoAfishaScrapperService>();
         }
 
         private void registerDbContext(IServiceCollection services)

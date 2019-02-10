@@ -6,6 +6,6 @@ namespace EventWebScrapper.Scrappers
 {
     public interface IKinoAfishaScrapper
     {
-        Task<IEnumerable<EventScrapData>> Scrap();
+        Task<IEnumerable<Event>> Scrap();
     }
 }

@@ -25,18 +25,6 @@ namespace EventWebScrapper.Tests
         }
 
         [Fact]
-        public async Task ScrapAsync_EventDateRepositoryGetCalledOnce()
-        {
-            var service = new KinoAfishaScrapperService(_eventRepositoryMock.Object,
-                                                        _eventDateRepositoryMock.Object,
-                                                        _kinoAfishaScrapperMock.Object);
-
-            await service.ScrapAsync();
-
-            _eventDateRepositoryMock.Verify(sr => sr.Get(), Times.Once);
-        }
-
-        [Fact]
         public async Task ScrapAsync_KinoAfishaScrapperScrapCalledOnce()
         {
             var service = new KinoAfishaScrapperService(_eventRepositoryMock.Object,

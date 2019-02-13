@@ -28,25 +28,32 @@ namespace EventWebScrapper.Services
         public async Task<bool> ScrapAsync()
         {
             var todaysDay = DateTime.UtcNow.Day;
-            var eventDates = _eventDateRepository.Get();
-
             var scrappedEvents = await _kinoAfishaScrapper.Scrap();
 
             foreach (var scrappedEvent in scrappedEvents)
             {
                 var existingEvent = await checkEventExists(scrappedEvent);
-                if (existingEvent != null)
-                {
-                    var todayEventDates = await eventDates
-                                            .Where(d => d.Date.Day == todaysDay && d.Event.Id == existingEvent.Id)
-                                            .ToListAsync();
-
-                    await _eventDateRepository.RemoveRangeAsync(todayEventDates);
-                    await _eventRepository.RemoveAsync(existingEvent.Id);
-                }
+                await removeExistingEvent(existingEvent, todaysDay);
             }
 
             return await this._eventRepository.AddRangeAsync(scrappedEvents);
+        }
+
+        private async Task removeExistingEvent(Event eventToRemove, int filterDay)
+        {
+            if (eventToRemove == null)
+            {
+                return;
+            }
+
+            var eventDates = _eventDateRepository.Get();
+
+            var todayEventDates = await eventDates
+                                    .Where(d => d.Date.Day == filterDay && d.Event.Id == eventToRemove.Id)
+                                    .ToListAsync();
+
+            await _eventDateRepository.RemoveRangeAsync(todayEventDates);
+            await _eventRepository.RemoveAsync(eventToRemove.Id);
         }
 
         private async Task<Event> checkEventExists(Event eventInfo)

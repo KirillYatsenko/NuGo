@@ -10,19 +10,16 @@ namespace EventWebScrapper.Services
 {
     public class KinoAfishaScrapperService : IKinoAfishaScrapperService
     {
-        private readonly IKinoAfishaScrapper _scrapper;
         private readonly IEventRepository _eventRepository;
         private readonly IEventDateRepository _eventDateRepository;
         private readonly IKinoAfishaScrapper _kinoAfishaScrapper;
 
         public KinoAfishaScrapperService(
-            IKinoAfishaScrapper scrapper,
             IEventRepository eventRepository,
             IEventDateRepository eventDateRepository,
             IKinoAfishaScrapper kinoAfishaScrapper
         )
         {
-            _scrapper = scrapper;
             _eventRepository = eventRepository;
             _eventDateRepository = eventDateRepository;
             _kinoAfishaScrapper = kinoAfishaScrapper;

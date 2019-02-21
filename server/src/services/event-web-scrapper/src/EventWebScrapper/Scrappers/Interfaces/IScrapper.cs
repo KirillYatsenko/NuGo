@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EventWebScrapper.Enums;
 using EventWebScrapper.Models;
 
 namespace EventWebScrapper.Scrappers
 {
-    public interface IKinoAfishaScrapper: IScrapper
+    public interface IScrapper
     {
+        Task<IEnumerable<Event>> Scrap(EventCategories category);
     }
 }

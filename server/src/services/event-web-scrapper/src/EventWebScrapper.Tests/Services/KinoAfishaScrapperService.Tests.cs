@@ -27,7 +27,7 @@ namespace EventWebScrapper.Tests
         [Fact]
         public async Task ScrapAsync_KinoAfishaScrapperScrapCalledOnce()
         {
-            var service = new KinoAfishaScrapperService(_eventRepositoryMock.Object,
+            var service = new KinoAfishaService(_eventRepositoryMock.Object,
                                                         _eventDateRepositoryMock.Object,
                                                         _kinoAfishaScrapperMock.Object);
 
@@ -39,7 +39,7 @@ namespace EventWebScrapper.Tests
         [Fact]
         public async Task ScrapAsync_EventRepositoryAddRangeCalledOnce()
         {
-            var service = new KinoAfishaScrapperService(_eventRepositoryMock.Object,
+            var service = new KinoAfishaService(_eventRepositoryMock.Object,
                                                         _eventDateRepositoryMock.Object,
                                                         _kinoAfishaScrapperMock.Object);
 
@@ -61,7 +61,7 @@ namespace EventWebScrapper.Tests
             var eventsMock = eventsEmpty.AsQueryable().BuildMock();
             _eventRepositoryMock.Setup(rp => rp.Get()).Returns(eventsMock.Object);
 
-            var service = new KinoAfishaScrapperService(_eventRepositoryMock.Object,
+            var service = new KinoAfishaService(_eventRepositoryMock.Object,
                                                         _eventDateRepositoryMock.Object,
                                                         _kinoAfishaScrapperMock.Object);
 
@@ -87,7 +87,7 @@ namespace EventWebScrapper.Tests
             var todaysEventsMock = todaysEvents.AsQueryable().BuildMock();
             _eventDateRepositoryMock.Setup(rp => rp.Get()).Returns(todaysEventsMock.Object);
 
-            var service = new KinoAfishaScrapperService(_eventRepositoryMock.Object,
+            var service = new KinoAfishaService(_eventRepositoryMock.Object,
                                                         _eventDateRepositoryMock.Object,
                                                         _kinoAfishaScrapperMock.Object);
 

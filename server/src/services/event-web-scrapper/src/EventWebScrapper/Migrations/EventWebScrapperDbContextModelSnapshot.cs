@@ -60,6 +60,21 @@ namespace EventWebScrapper.Migrations
                         {
                             Id = 1,
                             Name = "Cinema"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Concerts"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Theater"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Party"
                         });
                 });
 

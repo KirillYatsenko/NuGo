@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EventWebScrapper.Enums;
 using EventWebScrapper.Models;
+using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using ScrapySharp.Extensions;
 using ScrapySharp.Network;
@@ -15,9 +16,12 @@ namespace EventWebScrapper.Scrappers
     public class KinoAfishaScrapper : IKinoAfishaScrapper
     {
         private readonly string _kinoAfishaUri;
+        private readonly ScrapingBrowser _browser;
 
-        public KinoAfishaScrapper(IConfiguration configuration)
+        public KinoAfishaScrapper(IConfiguration configuration, ScrapingBrowser browser)
         {
+            _browser = browser;
+
             _kinoAfishaUri = configuration["KinoAfishaUri"];
 
             if (string.IsNullOrWhiteSpace(_kinoAfishaUri))
@@ -26,97 +30,190 @@ namespace EventWebScrapper.Scrappers
             }
         }
 
-        public async Task<IEnumerable<Event>> Scrap()
+        public async Task<IEnumerable<Event>> Scrap(EventCategories category)
         {
-            var scrappedData = new List<Event>();
+            var scrappedEvents = new List<Event>();
 
-            ScrapingBrowser Browser = new ScrapingBrowser();
-            Browser.AllowAutoRedirect = true;
-            Browser.AllowMetaRedirect = true;
-            Browser.Encoding = Encoding.UTF8;
+            var kinoafishaHomePage = await _browser.NavigateToPageAsync(new Uri($"{_kinoAfishaUri}/kinoafisha"));
+            var films = kinoafishaHomePage.Html.CssSelect(".list-films").First()?.CssSelect(".item > .text > h3");
 
-            WebPage pageResult = await Browser.NavigateToPageAsync(new Uri($"{_kinoAfishaUri}/kinoafisha"));
-            var filmsHtml = pageResult.Html.CssSelect(".list-films").First();
-            var titlesHtml = filmsHtml.CssSelect(".item > .text > h3");
-
-            foreach (var titleHtml in titlesHtml)
+            foreach (var film in films)
             {
-                var relativeUrl = titleHtml.CssSelect("a")?.First().Attributes["href"].Value;
-                var fullUrl = $"{_kinoAfishaUri}{relativeUrl}";
-
-                var detailsPage = await Browser.NavigateToPageAsync(new Uri(fullUrl));
-
-                var ratingString = detailsPage.Html.CssSelect("span[itemprop=ratingValue]").FirstOrDefault().InnerText;
-                var ratingNumber = Decimal.Parse(ratingString.Replace(',','.'));
-
-                var description = detailsPage.Html.CssSelect(".description").FirstOrDefault()?.InnerText;
-                var relativePhotoUrl = detailsPage.Html.CssSelect(".photo").FirstOrDefault()?.Attributes["href"].Value;
-                var fullImageUrl = $"{_kinoAfishaUri}{relativePhotoUrl}";
-
-                List<EventDate> eventDates = scrapSessions(detailsPage);
-
-                var newEvent = new Event()
-                {
-                    Title = titleHtml.InnerText,
-                    Description = description,
-                    DetailsUrl = fullUrl,
-                    ImageUrl = fullImageUrl,
-                    Dates = eventDates,
-                    CategoryId = (int)EventCategories.Cinema,
-                    Rating = ratingNumber
-                };
-
-                scrappedData.Add(newEvent);
+                var newEvent = await scrapFilm(film, category);
+                scrappedEvents.Add(newEvent);
             }
 
-            return scrappedData;
+            return scrappedEvents;
+        }
+
+        private async Task<Event> scrapFilm(HtmlNode filmHtml, EventCategories category)
+        {
+            var filmUrl = scrapFilmUrl(filmHtml);
+            var detailsPage = await _browser.NavigateToPageAsync(new Uri(filmUrl));
+
+            var rating = scrapFilmRating(detailsPage);
+            var description = scrapFilmDescription(detailsPage);
+            var imageUrl = scrapImageUrl(detailsPage);
+
+            var sessions = scrapSessions(detailsPage);
+
+            var film = new Event(filmHtml.InnerText, description, filmUrl,
+                                 imageUrl, (int)category, rating, sessions);
+
+            return film;
+        }
+
+        private string scrapFilmUrl(HtmlNode filmHtml)
+        {
+            var url = "";
+
+            var relativeUrl = filmHtml.CssSelect("a")?.First().Attributes["href"].Value;
+            url = $"{_kinoAfishaUri}{relativeUrl}";
+
+            return url;
+        }
+
+        private decimal scrapFilmRating(WebPage filmDetailsPage)
+        {
+            var rating = 0.0M;
+
+            var ratingString = filmDetailsPage.Html.CssSelect("span[itemprop=ratingValue]").FirstOrDefault().InnerText;
+            rating = Decimal.Parse(ratingString.Replace(',', '.'));
+
+            return rating;
+        }
+
+        private string scrapFilmDescription(WebPage filmDetailsPage)
+        {
+            var description = "";
+            description = filmDetailsPage.Html.CssSelect(".description").FirstOrDefault()?.InnerText;
+
+            return description;
+        }
+
+        private string scrapImageUrl(WebPage detailsPage)
+        {
+            var imageUrl = "";
+
+            var relativePhotoUrl = detailsPage.Html.CssSelect(".photo").FirstOrDefault()?
+                                                   .Attributes["href"].Value;
+
+            imageUrl = $"{_kinoAfishaUri}{relativePhotoUrl}";
+
+            return imageUrl;
         }
 
         private List<EventDate> scrapSessions(WebPage detailsPage)
         {
-            var eventDates = new List<EventDate>();
-            var filmSessions = detailsPage.Html.CssSelect(".film-sessions");
-            var monthDay = detailsPage.Html.CssSelect(".today").FirstOrDefault()?.InnerText;
+            var sessions = new List<EventDate>();
 
-            foreach (var session in filmSessions)
+            var cinemaSchedules = detailsPage.Html.CssSelect(".film-sessions");
+
+            foreach (var session in cinemaSchedules)
             {
-                var cinemaInfoRow = session.CssSelect("tr").FirstOrDefault();
-                var address = cinemaInfoRow.CssSelect(".cinema-room > a").FirstOrDefault().Attributes["title"].Value;
-                var cinemaName = cinemaInfoRow.CssSelect(".cinema-room > a > b").FirstOrDefault().InnerText;
-
-                var cinemaRoomRows = session.CssSelect("tr").Skip(1);
-
-                foreach (var cinemaRoomRow in cinemaRoomRows)
-                {
-                    var cinemaRoomPrice = cinemaRoomRow.CssSelect(".dotted > .note").FirstOrDefault()?.InnerText;
-
-                    var dates = cinemaRoomRow.CssSelect(".timewrap > .event").ToList();
-                    var bookableDates = cinemaRoomRow.CssSelect(".timewrap > .activeEvent");
-
-                    dates.AddRange(bookableDates);
-
-                    foreach (var date in dates)
-                    {
-                        var dateText = date.InnerText;
-
-                        var parsedDate = DateTime.ParseExact(dateText, "HH:mm",
-                                System.Globalization.CultureInfo.InvariantCulture);
-
-                        eventDates.Add(new EventDate()
-                        {
-                            Date = parsedDate,
-                            HostName = cinemaName,
-                            Address = address,
-                            Price = cinemaRoomPrice
-                        });
-                    }
-                }
-
+                List<EventDate> cinemaSessions = scrapCinemaSessions(session);
+                sessions.AddRange(cinemaSessions);
             }
 
-            return eventDates;
+            return sessions;
         }
 
+        private List<EventDate> scrapCinemaSessions(HtmlNode session)
+        {
+            var sessions = new List<EventDate>();
+
+            var cinemaInfo = session.CssSelect("tr").FirstOrDefault();
+
+            var cinemaName = scrapCinemaName(cinemaInfo);
+            var address = scrapCinemaAddress(cinemaInfo);
+
+            var cinemaHalls = session.CssSelect("tr").Skip(1);
+
+            foreach (var cinemaHall in cinemaHalls)
+            {
+                var cinemaHallEvents = scrapCinemaHallDates(cinemaHall, cinemaName, address);
+                sessions.AddRange(cinemaHallEvents);
+            }
+
+            return sessions;
+        }
+
+        private string scrapCinemaName(HtmlNode cinemaInfo)
+        {
+            var cinemaName = "";
+            cinemaName = cinemaInfo.CssSelect(".cinema-room > a > b").FirstOrDefault().InnerText;
+
+            return cinemaName;
+        }
+
+        private string scrapCinemaAddress(HtmlNode cinemaInfo)
+        {
+            var cinemaAddress = "";
+            cinemaAddress = cinemaInfo.CssSelect(".cinema-room > a").FirstOrDefault().Attributes["title"].Value;
+
+            return cinemaAddress;
+        }
+
+        private List<EventDate> scrapCinemaHallDates(HtmlNode cinemaHall, string cinemaName, string cinemaAddress)
+        {
+            var hallSessions = new List<EventDate>();
+
+            var hallPrice = scrapCinemaHallPrice(cinemaHall);
+
+            hallSessions = scrapHallSessions(cinemaHall);
+
+            hallSessions.ForEach(session =>
+            {
+                session.HostName = cinemaName;
+                session.Address = cinemaAddress;
+                session.Price = hallPrice;
+            });
+
+            return hallSessions;
+        }
+
+        private string scrapCinemaHallPrice(HtmlNode cinemaHall)
+        {
+            var price = "";
+
+            price = cinemaHall.CssSelect(".dotted > .note").FirstOrDefault()?.InnerText;
+
+            return price;
+        }
+
+        private List<EventDate> scrapHallSessions(HtmlNode cinemaHall)
+        {
+            var hallSessions = new List<EventDate>();
+
+            var dates = cinemaHall.CssSelect(".timewrap > .event").ToList();
+            var bookableDates = cinemaHall.CssSelect(".timewrap > .activeEvent");
+
+            dates.AddRange(bookableDates);
+
+            foreach (var date in dates)
+            {
+                var sessionDate = scrapSessionDate(date);
+
+                hallSessions.Add(new EventDate()
+                {
+                    Date = sessionDate,
+                });
+            }
+
+            return hallSessions;
+        }
+
+        private DateTime scrapSessionDate(HtmlNode date)
+        {
+            var sessionDate = new DateTime();
+
+            var dateText = date.InnerText;
+
+            sessionDate = DateTime.ParseExact(dateText, "HH:mm",
+                   System.Globalization.CultureInfo.InvariantCulture);
+
+            return sessionDate;
+        }
 
     }
 }

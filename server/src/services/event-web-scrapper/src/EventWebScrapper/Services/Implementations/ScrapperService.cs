@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using EventWebScrapper.Enums;
 using EventWebScrapper.Models;
 using EventWebScrapper.Repositories;
 using EventWebScrapper.Scrappers;
@@ -8,27 +9,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventWebScrapper.Services
 {
-    public class KinoAfishaScrapperService : IKinoAfishaScrapperService
+    public abstract class ScrapperService
     {
+        private readonly IScrapper _scrapper;
         private readonly IEventRepository _eventRepository;
         private readonly IEventDateRepository _eventDateRepository;
-        private readonly IKinoAfishaScrapper _kinoAfishaScrapper;
 
-        public KinoAfishaScrapperService(
+        public ScrapperService(
+            IScrapper scrapper,
             IEventRepository eventRepository,
-            IEventDateRepository eventDateRepository,
-            IKinoAfishaScrapper kinoAfishaScrapper
+            IEventDateRepository eventDateRepository
         )
         {
             _eventRepository = eventRepository;
             _eventDateRepository = eventDateRepository;
-            _kinoAfishaScrapper = kinoAfishaScrapper;
+            _scrapper = scrapper;
         }
 
-        public async Task<bool> ScrapAsync()
+        public async Task<bool> ScrapAsync(EventCategories category)
         {
             var todaysDay = DateTime.UtcNow.Day;
-            var scrappedEvents = await _kinoAfishaScrapper.Scrap();
+            var scrappedEvents = await _scrapper.Scrap(category);
 
             foreach (var scrappedEvent in scrappedEvents)
             {

@@ -36,6 +36,20 @@ public class EventWebScrapperDbContext : DbContext
             {
                 Id = 1,
                 Name = "Cinema"
+            },
+            new EventCategory
+            {
+                Id = 2,
+                Name = "Concerts"
+            }, new EventCategory
+            {
+                Id = 3,
+                Name = "Theater"
+            },
+            new EventCategory
+            {
+                Id = 4,
+                Name = "Party"
             }
         );
     }

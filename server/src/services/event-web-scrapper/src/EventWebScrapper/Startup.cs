@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using EventWebScrapper.Repositories;
 using EventWebScrapper.Scrappers;
+using EventWebScrapper.Scrappers.KoncertUAScrappers;
 using EventWebScrapper.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ScrapySharp.Network;
 
 namespace EventWebScrapper
 {
@@ -58,7 +61,21 @@ namespace EventWebScrapper
         private void registerServices(IServiceCollection services)
         {
             services.AddTransient<IKinoAfishaScrapper, KinoAfishaScrapper>();
-            services.AddTransient<IKinoAfishaScrapperService, KinoAfishaScrapperService>();
+            services.AddTransient<IKinoAfishaService, KinoAfishaService>();
+            services.AddTransient<IKoncertUAService, KoncertUAService>();
+            services.AddTransient<IKoncertUAScrapper, KoncertUAScrapper>();
+            services.AddTransient<ISingletSessionScrapper, SingletSessionScrapper>();
+            services.AddTransient<IMultipleSessionsScrapper, MultipleSessionsScrapper>();
+
+            services.AddTransient<ScrapingBrowser>(serviceProvider =>
+            {
+                var browser = new ScrapingBrowser();
+                browser.AllowAutoRedirect = true;
+                browser.AllowMetaRedirect = true;
+                browser.Encoding = Encoding.UTF8;
+
+                return browser;
+            });
         }
 
         private void registerDbContext(IServiceCollection services)

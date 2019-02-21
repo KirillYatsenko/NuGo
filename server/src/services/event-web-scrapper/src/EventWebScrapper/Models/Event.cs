@@ -6,6 +6,26 @@ namespace EventWebScrapper.Models
 {
     public class Event
     {
+        public Event() { }
+
+        public Event(
+            string title,
+            string description,
+            string detailsUrl,
+            string imageUrl,
+            int categoryId,
+            decimal rating,
+            List<EventDate> dates)
+        {
+            this.Title = title;
+            this.Description = description;
+            this.DetailsUrl = detailsUrl;
+            this.ImageUrl = imageUrl;
+            this.CategoryId = categoryId;
+            this.Rating = rating;
+            this.Dates = dates;
+        }
+
         [Key]
         public long Id { get; set; }
 

@@ -10,19 +10,19 @@ namespace EventWebScrapper.Tests
 {
     public class KinoAfishaControllerTests
     {
-        private readonly Mock<IKinoAfishaScrapperService> _kinoAfishaControllerMock;
+        private readonly Mock<IKinoAfishaService> _kinoAfishaControllerMock;
 
         public KinoAfishaControllerTests()
         {
-            _kinoAfishaControllerMock = new Mock<IKinoAfishaScrapperService>();
+            _kinoAfishaControllerMock = new Mock<IKinoAfishaService>();
             _kinoAfishaControllerMock.Setup(controller => controller.ScrapAsync()).ReturnsAsync(true);
         }
 
         [Fact]
         public async Task Scrap_ServiceScrapMethodCalledOnce()
         {
-            var controller = new KinoAfishaController(_kinoAfishaControllerMock.Object);
-            await controller.Scrap();
+            var controller = new KoncertUAController(_kinoAfishaControllerMock.Object);
+            await controller.ScrapConcerts();
 
             _kinoAfishaControllerMock.Verify(ctr => ctr.ScrapAsync(), Times.Once);
         }
@@ -30,8 +30,8 @@ namespace EventWebScrapper.Tests
         [Fact]
         public async Task Scrap_ReturnOkResponse()
         {
-            var controller = new KinoAfishaController(_kinoAfishaControllerMock.Object);
-            var result = await controller.Scrap();
+            var controller = new KoncertUAController(_kinoAfishaControllerMock.Object);
+            var result = await controller.ScrapConcerts();
             
             Assert.IsType<OkResult>(result);
         }

@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using EventWebScrapper.Enums;
 using EventWebScrapper.Repositories;
 using EventWebScrapper.Scrappers;
 using EventWebScrapper.Services;
@@ -11,17 +12,17 @@ namespace EventWebScrapper.Controllers
     [Route("api/[controller]")]
     public class KinoAfishaController : Controller
     {
-        private readonly IKinoAfishaScrapperService _kinoAfishaScrapper;
+        private readonly IKinoAfishaService _kinoAfishaService;
 
-        public KinoAfishaController(IKinoAfishaScrapperService kinoAfishaScrapper)
+        public KinoAfishaController(IKinoAfishaService kinoAfishaService)
         {
-            _kinoAfishaScrapper = kinoAfishaScrapper;
+            _kinoAfishaService = kinoAfishaService;
         }
 
         [HttpPost]
         public async Task<IActionResult> Scrap()
         {
-            var scrapResult = await _kinoAfishaScrapper.ScrapAsync();
+            var scrapResult = await _kinoAfishaService.ScrapAsync(EventCategories.Cinema);
             return Ok();
         }
 

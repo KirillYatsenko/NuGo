@@ -31,7 +31,8 @@ namespace EventWebScrapper.Migrations
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     ImageUrl = table.Column<string>(nullable: true),
-                    CategoryId = table.Column<int>(nullable: false)
+                    CategoryId = table.Column<int>(nullable: false),
+                    Rating = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,7 +72,13 @@ namespace EventWebScrapper.Migrations
             migrationBuilder.InsertData(
                 table: "EventCategories",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Cinema" });
+                values: new object[,]
+                {
+                    { 1, "Cinema" },
+                    { 2, "Concerts" },
+                    { 3, "Theater" },
+                    { 4, "Party" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventDates_EventId",

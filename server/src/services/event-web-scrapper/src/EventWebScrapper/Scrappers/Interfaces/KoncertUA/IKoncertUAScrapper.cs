@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EventWebScrapper.Models;
 
-namespace EventWebScrapper.Scrappers
+namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 {
-    public interface IKinoAfishaScrapper: IScrapper
+    public interface IKoncertUAScrapper: IScrapper
     {
     }
 }

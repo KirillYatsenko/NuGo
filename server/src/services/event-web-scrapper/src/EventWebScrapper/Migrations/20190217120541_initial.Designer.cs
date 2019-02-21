@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventWebScrapper.Migrations
 {
     [DbContext(typeof(EventWebScrapperDbContext))]
-    [Migration("20190210114734_event rating field added")]
-    partial class eventratingfieldadded
+    [Migration("20190217120541_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -62,6 +62,21 @@ namespace EventWebScrapper.Migrations
                         {
                             Id = 1,
                             Name = "Cinema"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Concerts"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Theater"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Party"
                         });
                 });
 

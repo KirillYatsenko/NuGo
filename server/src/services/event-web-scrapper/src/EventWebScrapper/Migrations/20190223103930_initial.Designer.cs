@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventWebScrapper.Migrations
 {
     [DbContext(typeof(EventWebScrapperDbContext))]
-    [Migration("20190217120541_initial")]
+    [Migration("20190223103930_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,7 +31,7 @@ namespace EventWebScrapper.Migrations
 
                     b.Property<string>("DetailsUrl");
 
-                    b.Property<string>("ImageUrl");
+                    b.Property<string>("ImagePath");
 
                     b.Property<decimal>("Rating");
 

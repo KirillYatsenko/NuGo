@@ -18,10 +18,14 @@ namespace EventWebScrapper.Scrappers
         private readonly string _kinoAfishaUri;
         private readonly ScrapingBrowser _browser;
 
-        public KinoAfishaScrapper(IConfiguration configuration, ScrapingBrowser browser)
+        private readonly IEventImageScrapper _eventImageScrapper;
+
+        public KinoAfishaScrapper(IConfiguration configuration,
+                                  IEventImageScrapper eventImageScrapper,
+                                  ScrapingBrowser browser)
         {
             _browser = browser;
-
+            _eventImageScrapper = eventImageScrapper;
             _kinoAfishaUri = configuration["KinoAfishaUri"];
 
             if (string.IsNullOrWhiteSpace(_kinoAfishaUri))
@@ -53,7 +57,7 @@ namespace EventWebScrapper.Scrappers
 
             var rating = scrapFilmRating(detailsPage);
             var description = scrapFilmDescription(detailsPage);
-            var imageUrl = scrapImageUrl(detailsPage);
+            var imageUrl = await scrapImageUrl(detailsPage, filmHtml.InnerText);
 
             var sessions = scrapSessions(detailsPage);
 
@@ -91,7 +95,7 @@ namespace EventWebScrapper.Scrappers
             return description;
         }
 
-        private string scrapImageUrl(WebPage detailsPage)
+        private async Task<string> scrapImageUrl(WebPage detailsPage, string eventTitle)
         {
             var imageUrl = "";
 
@@ -100,7 +104,9 @@ namespace EventWebScrapper.Scrappers
 
             imageUrl = $"{_kinoAfishaUri}{relativePhotoUrl}";
 
-            return imageUrl;
+            var imagePath = await _eventImageScrapper.ScrapImage(imageUrl, eventTitle);
+
+            return imagePath;
         }
 
         private List<EventDate> scrapSessions(WebPage detailsPage)

@@ -20,7 +20,7 @@ namespace EventWebScrapper.Models
             this.Title = title;
             this.Description = description;
             this.DetailsUrl = detailsUrl;
-            this.ImageUrl = imageUrl;
+            this.ImagePath = imageUrl;
             this.CategoryId = categoryId;
             this.Rating = rating;
             this.Dates = dates;
@@ -39,7 +39,7 @@ namespace EventWebScrapper.Models
         [MySqlCharset("utf8")]
         public string Description { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string ImagePath { get; set; }
 
         public int CategoryId { get; set; }
         public EventCategory Category { get; set; }

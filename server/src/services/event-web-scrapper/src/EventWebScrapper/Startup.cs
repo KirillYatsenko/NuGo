@@ -64,6 +64,9 @@ namespace EventWebScrapper
             services.AddTransient<IKinoAfishaService, KinoAfishaService>();
             services.AddTransient<IKoncertUAService, KoncertUAService>();
             services.AddTransient<IKoncertUAScrapper, KoncertUAScrapper>();
+            services.AddTransient<IFileBrowserService, FileBrowserService>();
+            services.AddTransient<IFileDownloaderService, FileDownloaderService>();
+            services.AddTransient<IEventImageScrapper, EventImageScrapper>();
             services.AddTransient<ISingletSessionScrapper, SingletSessionScrapper>();
             services.AddTransient<IMultipleSessionsScrapper, MultipleSessionsScrapper>();
 

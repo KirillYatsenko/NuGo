@@ -29,7 +29,7 @@ namespace EventWebScrapper.Migrations
 
                     b.Property<string>("DetailsUrl");
 
-                    b.Property<string>("ImageUrl");
+                    b.Property<string>("ImagePath");
 
                     b.Property<decimal>("Rating");
 

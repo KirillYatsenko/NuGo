@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EventWebScrapper.Enums;
 using EventWebScrapper.Models;
-using EventWebScrapper.Scrappers.KoncertUAScrappers;
+using EventWebScrapper.Services;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using ScrapySharp.Extensions;
@@ -20,9 +18,9 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
     {
         private readonly string _koncertUaUri;
         private readonly ScrapingBrowser _browser;
+        private readonly IEventImageScrapper _eventImageScrapper;
         private readonly ISingletSessionScrapper _singleSessionScrapper;
         private readonly IMultipleSessionsScrapper _multipleSessionsScrapper;
-
 
         private string todayFilter
         {
@@ -36,10 +34,12 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
         }
         public KoncertUAScrapper(IConfiguration configuration,
                                  ScrapingBrowser browser,
+                                 IEventImageScrapper eventImageScrapper,
                                  ISingletSessionScrapper singletSessionScrapper,
                                  IMultipleSessionsScrapper multipleSessionsScrapper)
         {
             _browser = browser;
+            _eventImageScrapper = eventImageScrapper;
             _singleSessionScrapper = singletSessionScrapper;
             _multipleSessionsScrapper = multipleSessionsScrapper;
 
@@ -67,8 +67,15 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 
             foreach (var performance in performances)
             {
-                var newEvent = await scrapPerformance(performance, category);
-                scrappedEvents.Add(newEvent);
+                try
+                {
+                    var newEvent = await scrapPerformance(performance, category);
+                    scrappedEvents.Add(newEvent);
+                }
+                catch (Exception)
+                {
+                    System.Console.WriteLine("Failed to scrap sessions, probably html markup has been changed");
+                }
             }
 
             return scrappedEvents;
@@ -81,12 +88,13 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 
             var performanceTitle = scrapTitle(performanceCard);
             var description = scrapDescription(detailsPage);
-            var imageUrl = scrapImageUrl(performanceCard);
 
-            var performanceDates = scrapSessions(performanceCard, detailsPage.Html);
+            var imageUrl = await scrapImageUrl(performanceCard, performanceTitle);
+
+            var performanceSessions = scrapSessions(performanceCard, detailsPage.Html).ToList();
 
             var performance = new Event(performanceTitle, description, performanceUrl,
-                                        imageUrl, (int)category, 0.0m, performanceDates.ToList());
+                                        imageUrl, (int)category, 0.0m, performanceSessions);
 
             return performance;
         }
@@ -121,7 +129,7 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
             return description;
         }
 
-        private string scrapImageUrl(HtmlNode performanceHtml)
+        private async Task<string> scrapImageUrl(HtmlNode performanceHtml, string performanceTitle)
         {
             var imageUrl = performanceHtml.CssSelect(".event-info-img ")
                                             .FirstOrDefault()?.Attributes["src"].Value;
@@ -132,7 +140,9 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
                                           .FirstOrDefault()?.Attributes["src"].Value;
             }
 
-            return imageUrl;
+            var imagePath = await _eventImageScrapper.ScrapImage(imageUrl, performanceTitle);
+
+            return imagePath;
         }
 
         private IEnumerable<EventDate> scrapSessions(HtmlNode performanceCard, HtmlNode detailsPage)
@@ -143,18 +153,13 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 
             if (eventHasMultipleDates(detailsPage))
             {
-                scrappedSessions = _multipleSessionsScrapper.scrapSessions(detailsPage, performanceCard, placeName).ToList();
+                scrappedSessions = _multipleSessionsScrapper
+                                        .scrapSessions(detailsPage, performanceCard, placeName).ToList();
             }
             else
             {
-                try
-                {
-                    scrappedSessions = _singleSessionScrapper.ScrapSession(performanceCard, detailsPage, placeName).ToList();
-                }
-                catch (Exception ex)
-                {
-                    System.Console.WriteLine("Failed to scrap session, probably because of  Ajax request");
-                }
+                scrappedSessions = _singleSessionScrapper
+                                        .ScrapSession(performanceCard, detailsPage, placeName).ToList();
             }
 
             eventDates.AddRange(scrappedSessions);

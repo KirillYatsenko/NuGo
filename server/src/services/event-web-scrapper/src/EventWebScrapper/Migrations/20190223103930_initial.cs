@@ -30,7 +30,7 @@ namespace EventWebScrapper.Migrations
                     Deleted = table.Column<short>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    ImageUrl = table.Column<string>(nullable: true),
+                    ImagePath = table.Column<string>(nullable: true),
                     CategoryId = table.Column<int>(nullable: false),
                     Rating = table.Column<decimal>(nullable: false)
                 },

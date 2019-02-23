@@ -66,6 +66,11 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 
             timeText = timeText.Replace("\n", "");
 
+            if (timeText[0] == ' ')
+            {
+                timeText.Remove(0, 1);
+            }
+
             timeText = MonthsConvertor.ReplaceMonth(timeText);
 
             // Ex.: 22 февраля 2019 18:00
@@ -81,7 +86,7 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 
             price = performanceCard.CssSelect(".event-tickets-item-buy__price-value")
                               .FirstOrDefault()?.InnerText;
-                              
+
             price = price.Replace("\n", string.Empty);
 
             return price;

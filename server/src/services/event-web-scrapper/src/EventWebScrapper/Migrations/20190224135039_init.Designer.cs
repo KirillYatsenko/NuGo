@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventWebScrapper.Migrations
 {
     [DbContext(typeof(EventWebScrapperDbContext))]
-    [Migration("20190223103930_initial")]
-    partial class initial
+    [Migration("20190224135039_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -97,14 +97,33 @@ namespace EventWebScrapper.Migrations
                     b.Property<string>("HostName")
                         .HasAnnotation("MySQL:Charset", "utf8");
 
-                    b.Property<string>("Price")
-                        .HasAnnotation("MySQL:Charset", "utf8");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
 
                     b.ToTable("EventDates");
+                });
+
+            modelBuilder.Entity("EventWebScrapper.Models.PriceInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Currency")
+                        .HasAnnotation("MySQL:Charset", "utf8");
+
+                    b.Property<int>("EventDateId");
+
+                    b.Property<decimal>("Max");
+
+                    b.Property<decimal>("Min");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventDateId")
+                        .IsUnique();
+
+                    b.ToTable("Prices");
                 });
 
             modelBuilder.Entity("EventWebScrapper.Models.Event", b =>
@@ -120,6 +139,14 @@ namespace EventWebScrapper.Migrations
                     b.HasOne("EventWebScrapper.Models.Event", "Event")
                         .WithMany("Dates")
                         .HasForeignKey("EventId");
+                });
+
+            modelBuilder.Entity("EventWebScrapper.Models.PriceInfo", b =>
+                {
+                    b.HasOne("EventWebScrapper.Models.EventDate", "EventDate")
+                        .WithOne("Price")
+                        .HasForeignKey("EventWebScrapper.Models.PriceInfo", "EventDateId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

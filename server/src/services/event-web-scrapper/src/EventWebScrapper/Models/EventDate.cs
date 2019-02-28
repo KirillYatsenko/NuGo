@@ -11,6 +11,8 @@ namespace EventWebScrapper.Models
 
         public Event Event { get; set; }
 
+        public PriceInfo Price { get; set; }
+
         public DateTime Date { get; set; }
 
         public bool Deleted { get; set; }
@@ -20,8 +22,5 @@ namespace EventWebScrapper.Models
 
         [MySqlCharset("utf8")]
         public string Address { get; set; }
-
-        [MySqlCharset("utf8")]
-        public string Price { get; set; }
     }
 }

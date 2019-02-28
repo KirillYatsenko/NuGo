@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace EventWebScrapper.Scrappers
+namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 {
     public static class MonthsConvertor
     {

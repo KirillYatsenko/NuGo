@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using EventWebScrapper.Models;
 using HtmlAgilityPack;
 using ScrapySharp.Extensions;
@@ -58,17 +59,15 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
             return sessionDate;
         }
 
-        private string scrapPrice(HtmlNode performanceCard)
+        private PriceInfo scrapPrice(HtmlNode performanceCard)
         {
-            var price = "";
-
-            price = performanceCard.CssSelect(".event__price")
+            var priceText = performanceCard.CssSelect(".event__price")
                                     .FirstOrDefault()?.InnerText;
 
-            return price;
+            var priceInfo = KoncertUaPriceConvertor.Convert(priceText);
+
+            return priceInfo;
         }
-
-
 
     }
 }

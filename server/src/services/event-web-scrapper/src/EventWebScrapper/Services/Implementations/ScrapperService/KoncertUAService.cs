@@ -1,7 +1,4 @@
-using System.Threading.Tasks;
-using EventWebScrapper.Enums;
 using EventWebScrapper.Repositories;
-using EventWebScrapper.Scrappers;
 using EventWebScrapper.Scrappers.KoncertUAScrappers;
 
 namespace EventWebScrapper.Services

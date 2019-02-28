@@ -1,11 +1,5 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using EventWebScrapper.Enums;
-using EventWebScrapper.Models;
 using EventWebScrapper.Repositories;
-using EventWebScrapper.Scrappers;
-using Microsoft.EntityFrameworkCore;
+using EventWebScrapper.Scrappers.KinoAfishaScrappers;
 
 namespace EventWebScrapper.Services
 {

@@ -10,7 +10,8 @@ public class EventWebScrapperDbContext : DbContext
     public DbSet<Event> Events { get; set; }
     public DbSet<EventCategory> EventCategories { get; set; }
     public DbSet<EventDate> EventDates { get; set; }
-
+    public DbSet<PriceInfo> Prices { get; set; }
+    
     public EventWebScrapperDbContext(DbContextOptions options)
        : base(options) { }
 
@@ -25,6 +26,11 @@ public class EventWebScrapperDbContext : DbContext
         modelBuilder.Entity<EventDate>()
             .Property(r => r.Deleted)
             .HasConversion(new BoolToZeroOneConverter<Int16>());
+
+        modelBuilder.Entity<EventDate>()
+            .HasOne(r => r.Price)
+            .WithOne(r => r.EventDate)
+            .HasForeignKey<PriceInfo>(r => r.EventDateId);
 
         seedDatabase(modelBuilder);
     }

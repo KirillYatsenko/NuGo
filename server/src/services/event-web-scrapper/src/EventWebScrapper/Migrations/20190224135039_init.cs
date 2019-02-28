@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EventWebScrapper.Migrations
 {
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -55,8 +55,7 @@ namespace EventWebScrapper.Migrations
                     Date = table.Column<DateTime>(nullable: false),
                     Deleted = table.Column<short>(nullable: false),
                     HostName = table.Column<string>(nullable: true),
-                    Address = table.Column<string>(nullable: true),
-                    Price = table.Column<string>(nullable: true)
+                    Address = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,6 +66,28 @@ namespace EventWebScrapper.Migrations
                         principalTable: "Events",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Prices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySQL:AutoIncrement", true),
+                    EventDateId = table.Column<int>(nullable: false),
+                    Min = table.Column<decimal>(nullable: false),
+                    Max = table.Column<decimal>(nullable: false),
+                    Currency = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Prices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Prices_EventDates_EventDateId",
+                        column: x => x.EventDateId,
+                        principalTable: "EventDates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -89,10 +110,19 @@ namespace EventWebScrapper.Migrations
                 name: "IX_Events_CategoryId",
                 table: "Events",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prices_EventDateId",
+                table: "Prices",
+                column: "EventDateId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Prices");
+
             migrationBuilder.DropTable(
                 name: "EventDates");
 

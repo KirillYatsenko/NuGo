@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using ScrapySharp.Extensions;
 using ScrapySharp.Network;
 
-namespace EventWebScrapper.Scrappers
+namespace EventWebScrapper.Scrappers.KinoAfishaScrappers
 {
     public class KinoAfishaScrapper : IKinoAfishaScrapper
     {
@@ -178,13 +178,12 @@ namespace EventWebScrapper.Scrappers
             return hallSessions;
         }
 
-        private string scrapCinemaHallPrice(HtmlNode cinemaHall)
+        private PriceInfo scrapCinemaHallPrice(HtmlNode cinemaHall)
         {
-            var price = "";
+            var price = cinemaHall.CssSelect(".dotted > .note").FirstOrDefault()?.InnerText;
 
-            price = cinemaHall.CssSelect(".dotted > .note").FirstOrDefault()?.InnerText;
-
-            return price;
+            var priceInfo = KinoAfishaPriceConvertor.Convert(price);
+            return priceInfo;
         }
 
         private List<EventDate> scrapHallSessions(HtmlNode cinemaHall)

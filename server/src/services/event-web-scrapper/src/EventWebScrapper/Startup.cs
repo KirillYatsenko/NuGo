@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EventWebScrapper.Repositories;
 using EventWebScrapper.Scrappers;
+using EventWebScrapper.Scrappers.KinoAfishaScrappers;
 using EventWebScrapper.Scrappers.KoncertUAScrappers;
 using EventWebScrapper.Services;
 using Microsoft.AspNetCore.Builder;

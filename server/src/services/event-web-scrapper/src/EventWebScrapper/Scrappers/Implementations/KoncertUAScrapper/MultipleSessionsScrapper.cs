@@ -80,16 +80,14 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
             return ticketDate;
         }
 
-        private string scrapPrice(HtmlNode performanceCard)
+        private PriceInfo scrapPrice(HtmlNode performanceCard)
         {
-            var price = "";
-
-            price = performanceCard.CssSelect(".event-tickets-item-buy__price-value")
+            var price = performanceCard.CssSelect(".event-tickets-item-buy__price-value")
                               .FirstOrDefault()?.InnerText;
 
-            price = price.Replace("\n", string.Empty);
+            var priceInfo = KoncertUaPriceConvertor.Convert(price);
 
-            return price;
+            return priceInfo;
         }
 
     }

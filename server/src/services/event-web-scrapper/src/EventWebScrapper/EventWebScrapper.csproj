@@ -11,6 +11,11 @@
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.15" />
     <PackageReference Include="ScrapySharp" Version="3.0.0" />
     <PackageReference Include="UnidecodeSharpFork" Version="1.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\common\EventBus\EventBus.csproj" />
   </ItemGroup>
 
 </Project>

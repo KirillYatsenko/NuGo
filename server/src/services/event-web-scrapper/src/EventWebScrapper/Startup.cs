@@ -4,6 +4,13 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using EventBus.Abstracts;
+using EventBus.Implementations;
+using EventWebScrapper.EventHandlers;
+using EventWebScrapper.IntegrationEvents;
+using EventWebScrapper.Models;
 using EventWebScrapper.Repositories;
 using EventWebScrapper.Scrappers;
 using EventWebScrapper.Scrappers.KinoAfishaScrappers;
@@ -31,13 +38,18 @@ namespace EventWebScrapper
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             registerRepositories(services);
-            registerServices(services);
             registerDbContext(services);
+            registerServices(services);
+            registerEventBus(services);
+
+            var container = new ContainerBuilder();
+            container.Populate(services);
+            return new AutofacServiceProvider(container.Build());
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -51,6 +63,8 @@ namespace EventWebScrapper
             }
 
             app.UseMvc();
+
+            ConfigureEventBus(app);
         }
 
         private void registerRepositories(IServiceCollection services)
@@ -70,6 +84,7 @@ namespace EventWebScrapper
             services.AddTransient<IEventImageScrapper, EventImageScrapper>();
             services.AddTransient<ISingletSessionScrapper, SingletSessionScrapper>();
             services.AddTransient<IMultipleSessionsScrapper, MultipleSessionsScrapper>();
+            services.AddTransient<ScrapKinoafishaEventHandler>();
 
             services.AddTransient<ScrapingBrowser>(serviceProvider =>
             {
@@ -93,5 +108,23 @@ namespace EventWebScrapper
 
             services.AddDbContext<EventWebScrapperDbContext>(options => options.UseMySQL(sqlConnection));
         }
+
+        private void registerEventBus(IServiceCollection services)
+        {
+            services.AddSingleton<IEventBus, EventBusRabbitMQ>(serviceProvider =>
+            {
+                var iLifetimeScope = serviceProvider.GetRequiredService<ILifetimeScope>();
+
+                return new EventBusRabbitMQ(iLifetimeScope);
+            });
+        }
+
+        private void ConfigureEventBus(IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+
+            eventBus.Subscribe<ScrapKinoafishaEventHandler, ScrapIntegrationEvent>(Configuration["ServiceName"], "KinoAfisha");
+        }
+
     }
 }

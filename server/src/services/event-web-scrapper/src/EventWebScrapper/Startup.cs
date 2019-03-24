@@ -69,8 +69,8 @@ namespace EventWebScrapper
 
         private void registerRepositories(IServiceCollection services)
         {
-            services.AddTransient<IEventDateRepository, EventDateRepository>();
-            services.AddTransient<IEventRepository, EventRepository>();
+            services.AddSingleton<IEventDateRepository, EventDateRepository>();
+            services.AddSingleton<IEventRepository, EventRepository>();
         }
 
         private void registerServices(IServiceCollection services)
@@ -84,7 +84,9 @@ namespace EventWebScrapper
             services.AddTransient<IEventImageScrapper, EventImageScrapper>();
             services.AddTransient<ISingletSessionScrapper, SingletSessionScrapper>();
             services.AddTransient<IMultipleSessionsScrapper, MultipleSessionsScrapper>();
+            services.AddTransient<KoncertUaEventHandler>();
             services.AddTransient<ScrapKinoafishaEventHandler>();
+            services.AddTransient<IEventService, EventService>();
 
             services.AddTransient<ScrapingBrowser>(serviceProvider =>
             {
@@ -123,6 +125,7 @@ namespace EventWebScrapper
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
+            eventBus.Subscribe<KoncertUaEventHandler, ScrapIntegrationEvent>(Configuration["ServiceName"], "KoncertUA");
             eventBus.Subscribe<ScrapKinoafishaEventHandler, ScrapIntegrationEvent>(Configuration["ServiceName"], "KinoAfisha");
         }
 

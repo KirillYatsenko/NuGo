@@ -15,6 +15,7 @@ namespace EventBus.Implementations
     {
         private readonly ConnectionFactory _factory;
         private readonly ILifetimeScope _autofacScope;
+        private const string SCOPE_NAME = "event_bus";
 
         public EventBusRabbitMQ(ILifetimeScope scope)
         {
@@ -75,7 +76,7 @@ namespace EventBus.Implementations
                 var deserializedMessageObject = JsonConvert.DeserializeObject(messageString, typeof(K));
                 var parsedObject = (K)deserializedMessageObject;
 
-                using (var scope = _autofacScope.BeginLifetimeScope("RANDOM"))
+                using (var scope = _autofacScope.BeginLifetimeScope(SCOPE_NAME))
                 {
                     var handlerObject = scope.ResolveOptional(typeof(T));
                     var parsedHandler = (IEventHandler<K>)handlerObject;

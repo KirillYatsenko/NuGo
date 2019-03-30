@@ -11,7 +11,7 @@ public class EventWebScrapperDbContext : DbContext
     public DbSet<EventCategory> EventCategories { get; set; }
     public DbSet<EventDate> EventDates { get; set; }
     public DbSet<PriceInfo> Prices { get; set; }
-    
+
     public EventWebScrapperDbContext(DbContextOptions options)
        : base(options) { }
 

@@ -60,7 +60,7 @@ namespace EventBus.Implementations
 
             channel.BasicConsume(queue: queueName,
                            autoAck: true,
-                           consumer: consumer);
+                           consumer: consumer); 
         }
 
         private void subscribeHandler<T, K>(EventingBasicConsumer consumer)

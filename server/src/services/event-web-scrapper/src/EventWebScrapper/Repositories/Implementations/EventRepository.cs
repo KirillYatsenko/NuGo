@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventWebScrapper.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventWebScrapper.Repositories
 {
@@ -28,7 +29,9 @@ namespace EventWebScrapper.Repositories
 
         public IQueryable<Event> Get()
         {
-            return _dbContext.Events.AsQueryable();
+            return _dbContext.Events
+                    .Include(@event => @event.Category)
+                    .AsQueryable();
         }
 
         public async Task<Event> GetAsync(long id)
@@ -39,12 +42,12 @@ namespace EventWebScrapper.Repositories
         public async Task<bool> RemoveAsync(long id)
         {
             var scrapData = await _dbContext.Events.FindAsync(id);
-            
+
             if (scrapData == null)
             {
                 return false;
             }
-                
+
             scrapData.Deleted = true;
             return await UpdateAsync(scrapData);
         }

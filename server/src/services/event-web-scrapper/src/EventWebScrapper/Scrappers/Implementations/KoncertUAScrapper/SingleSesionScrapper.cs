@@ -10,9 +10,9 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 {
     public class SingletSessionScrapper : ISingletSessionScrapper
     {
-        public IEnumerable<EventDate> ScrapSession(HtmlNode performanceCard, HtmlNode performance, string placeName)
+        public IEnumerable<EventSchedule> ScrapSession(HtmlNode performanceCard, HtmlNode performance, string placeName)
         {
-            var sessions = new List<EventDate>();
+            var sessions = new List<EventSchedule>();
 
             var session = scrapSession(performanceCard, performance, placeName);
             sessions.Add(session);
@@ -21,9 +21,9 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
         }
 
 
-        private EventDate scrapSession(HtmlNode performanceCard, HtmlNode performance, string placeName)
+        private EventSchedule scrapSession(HtmlNode performanceCard, HtmlNode performance, string placeName)
         {
-            var performanceDate = new EventDate();
+            var performanceDate = new EventSchedule();
 
             var address = scrapAddress(performance);
             var date = scrapDate(performance);

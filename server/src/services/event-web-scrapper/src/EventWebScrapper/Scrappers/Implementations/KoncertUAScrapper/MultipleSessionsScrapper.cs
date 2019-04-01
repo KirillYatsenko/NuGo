@@ -9,18 +9,18 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 {
     public class MultipleSessionsScrapper : IMultipleSessionsScrapper
     {
-        public IEnumerable<EventDate> scrapSessions(HtmlNode detailsPage, HtmlNode performanceCard,
+        public IEnumerable<EventSchedule> scrapSessions(HtmlNode detailsPage, HtmlNode performanceCard,
                                                     string placeName)
         {
-            var scrappedSessions = new List<EventDate>();
+            var scrappedSessions = new List<EventSchedule>();
             scrappedSessions = scrapMultipleSessions(detailsPage, performanceCard, placeName).ToList();
 
             return scrappedSessions;
         }
 
-        private IEnumerable<EventDate> scrapMultipleSessions(HtmlNode detailsPage, HtmlNode performanceCard, string placeName)
+        private IEnumerable<EventSchedule> scrapMultipleSessions(HtmlNode detailsPage, HtmlNode performanceCard, string placeName)
         {
-            var sessions = new List<EventDate>();
+            var sessions = new List<EventSchedule>();
             var tickets = detailsPage.CssSelect(".event-tickets-item");
 
             foreach (var ticket in tickets)
@@ -32,9 +32,9 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
             return sessions;
         }
 
-        private EventDate scrapSession(HtmlNode performanceCard, HtmlNode ticket, string placeName)
+        private EventSchedule scrapSession(HtmlNode performanceCard, HtmlNode ticket, string placeName)
         {
-            var performanceDate = new EventDate();
+            var performanceDate = new EventSchedule();
 
             var address = scrapAddress(ticket);
             var date = scrapDate(ticket);

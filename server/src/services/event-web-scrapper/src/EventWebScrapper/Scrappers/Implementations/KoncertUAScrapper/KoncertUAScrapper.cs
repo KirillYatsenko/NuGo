@@ -145,11 +145,11 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
             return imagePath;
         }
 
-        private IEnumerable<EventDate> scrapSessions(HtmlNode performanceCard, HtmlNode detailsPage)
+        private IEnumerable<EventSchedule> scrapSessions(HtmlNode performanceCard, HtmlNode detailsPage)
         {
-            var eventDates = new List<EventDate>();
+            var eventDates = new List<EventSchedule>();
             var placeName = scrapPlaceName(detailsPage);
-            var scrappedSessions = new List<EventDate>();
+            var scrappedSessions = new List<EventSchedule>();
 
             if (eventHasMultipleDates(detailsPage))
             {

@@ -109,24 +109,24 @@ namespace EventWebScrapper.Scrappers.KinoAfishaScrappers
             return imagePath;
         }
 
-        private List<EventDate> scrapSessions(WebPage detailsPage)
+        private List<EventSchedule> scrapSessions(WebPage detailsPage)
         {
-            var sessions = new List<EventDate>();
+            var sessions = new List<EventSchedule>();
 
             var cinemaSchedules = detailsPage.Html.CssSelect(".film-sessions");
 
             foreach (var session in cinemaSchedules)
             {
-                List<EventDate> cinemaSessions = scrapCinemaSessions(session);
+                List<EventSchedule> cinemaSessions = scrapCinemaSessions(session);
                 sessions.AddRange(cinemaSessions);
             }
 
             return sessions;
         }
 
-        private List<EventDate> scrapCinemaSessions(HtmlNode session)
+        private List<EventSchedule> scrapCinemaSessions(HtmlNode session)
         {
-            var sessions = new List<EventDate>();
+            var sessions = new List<EventSchedule>();
 
             var cinemaInfo = session.CssSelect("tr").FirstOrDefault();
 
@@ -160,9 +160,9 @@ namespace EventWebScrapper.Scrappers.KinoAfishaScrappers
             return cinemaAddress;
         }
 
-        private List<EventDate> scrapCinemaHallDates(HtmlNode cinemaHall, string cinemaName, string cinemaAddress)
+        private List<EventSchedule> scrapCinemaHallDates(HtmlNode cinemaHall, string cinemaName, string cinemaAddress)
         {
-            var hallSessions = new List<EventDate>();
+            var hallSessions = new List<EventSchedule>();
 
             var hallPrice = scrapCinemaHallPrice(cinemaHall);
 
@@ -186,9 +186,9 @@ namespace EventWebScrapper.Scrappers.KinoAfishaScrappers
             return priceInfo;
         }
 
-        private List<EventDate> scrapHallSessions(HtmlNode cinemaHall)
+        private List<EventSchedule> scrapHallSessions(HtmlNode cinemaHall)
         {
-            var hallSessions = new List<EventDate>();
+            var hallSessions = new List<EventSchedule>();
 
             var dates = cinemaHall.CssSelect(".timewrap > .event").ToList();
             var bookableDates = cinemaHall.CssSelect(".timewrap > .activeEvent");
@@ -199,7 +199,7 @@ namespace EventWebScrapper.Scrappers.KinoAfishaScrappers
             {
                 var sessionDate = scrapSessionDate(date);
 
-                hallSessions.Add(new EventDate()
+                hallSessions.Add(new EventSchedule()
                 {
                     Date = sessionDate,
                 });

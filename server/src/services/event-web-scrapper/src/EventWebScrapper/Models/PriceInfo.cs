@@ -8,7 +8,7 @@ namespace EventWebScrapper.Models
         [Key]
         public int Id { get; set; }
 
-        public EventDate EventDate { get; set; }
+        public EventSchedule Schedule { get; set; }
 
         public int EventDateId { get; set; }
 

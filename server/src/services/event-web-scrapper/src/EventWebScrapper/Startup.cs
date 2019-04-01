@@ -69,8 +69,8 @@ namespace EventWebScrapper
 
         private void registerRepositories(IServiceCollection services)
         {
-            services.AddSingleton<IEventDateRepository, EventDateRepository>();
-            services.AddSingleton<IEventRepository, EventRepository>();
+            services.AddSingleton<IEventsScheduleRepository, IEventsScheduleRepository>();
+            services.AddSingleton<IEventsRepository, EventsRepository>();
         }
 
         private void registerServices(IServiceCollection services)

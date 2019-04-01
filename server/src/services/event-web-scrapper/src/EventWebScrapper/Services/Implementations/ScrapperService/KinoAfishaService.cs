@@ -6,8 +6,8 @@ namespace EventWebScrapper.Services
     public class KinoAfishaService : ScrapperService, IKinoAfishaService
     {
         public KinoAfishaService(IKinoAfishaScrapper scrapper,
-                                 IEventRepository eventRepository,
-                                 IEventDateRepository eventDateRepository)
+                                 IEventsRepository eventRepository,
+                                 IEventsScheduleRepository eventDateRepository)
 
             : base(scrapper, eventRepository, eventDateRepository) { }
     }

@@ -15,7 +15,7 @@ namespace EventWebScrapper.Models
             string imageUrl,
             int categoryId,
             decimal rating,
-            List<EventDate> dates)
+            List<EventSchedule> schedules)
         {
             this.Title = title;
             this.Description = description;
@@ -23,7 +23,7 @@ namespace EventWebScrapper.Models
             this.ImagePath = imageUrl;
             this.CategoryId = categoryId;
             this.Rating = rating;
-            this.Dates = dates;
+            this.Schedules = schedules;
         }
 
         [Key]
@@ -44,7 +44,7 @@ namespace EventWebScrapper.Models
         public int CategoryId { get; set; }
         public EventCategory Category { get; set; }
 
-        public List<EventDate> Dates { get; set; }
+        public List<EventSchedule> Schedules { get; set; }
 
         public decimal Rating { get; set; }
     }

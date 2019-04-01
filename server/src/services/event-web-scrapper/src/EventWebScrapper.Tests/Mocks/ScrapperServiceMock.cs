@@ -7,8 +7,8 @@ namespace EventWebScrapper.Tests.Mocks
     public class ScrapperServiceMock : ScrapperService
     {
         public ScrapperServiceMock(IScrapper scrapper,
-                                   IEventRepository eventRepository,
-                                   IEventDateRepository eventDateRepository) : base(scrapper, eventRepository, eventDateRepository)
+                                   IEventsRepository eventRepository,
+                                   IEventsScheduleRepository eventDateRepository) : base(scrapper, eventRepository, eventDateRepository)
         { }
 
     }

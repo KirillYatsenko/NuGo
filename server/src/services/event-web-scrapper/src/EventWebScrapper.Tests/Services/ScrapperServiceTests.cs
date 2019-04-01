@@ -16,14 +16,14 @@ namespace EventWebScrapper.Tests
     public class ScrapperServiceTests
     {
         private readonly Mock<IScrapper> _scrapperMock;
-        private readonly Mock<IEventRepository> _eventRepositoryMock;
-        private readonly Mock<IEventDateRepository> _eventDateRepositoryMock;
+        private readonly Mock<IEventsRepository> _eventRepositoryMock;
+        private readonly Mock<IEventsScheduleRepository> _eventDateRepositoryMock;
 
         public ScrapperServiceTests()
         {
             _scrapperMock = new Mock<IScrapper>();
-            _eventRepositoryMock = new Mock<IEventRepository>();
-            _eventDateRepositoryMock = new Mock<IEventDateRepository>();
+            _eventRepositoryMock = new Mock<IEventsRepository>();
+            _eventDateRepositoryMock = new Mock<IEventsScheduleRepository>();
         }
 
         [Theory]
@@ -91,7 +91,7 @@ namespace EventWebScrapper.Tests
             var eventsMock = scrappedEvents.AsQueryable().BuildMock();
             _eventRepositoryMock.Setup(rp => rp.Get()).Returns(eventsMock.Object);
 
-            var todaysEvents = new List<EventDate>();
+            var todaysEvents = new List<EventSchedule>();
             var todaysEventsMock = todaysEvents.AsQueryable().BuildMock();
             _eventDateRepositoryMock.Setup(rp => rp.Get()).Returns(todaysEventsMock.Object);
 

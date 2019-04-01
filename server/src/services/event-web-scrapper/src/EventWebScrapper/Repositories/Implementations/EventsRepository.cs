@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventWebScrapper.Repositories
 {
-    public class EventRepository : IEventRepository
+    public class EventsRepository : IEventsRepository
     {
         private readonly EventWebScrapperDbContext _dbContext;
 
-        public EventRepository(EventWebScrapperDbContext dbContext)
+        public EventsRepository(EventWebScrapperDbContext dbContext)
         {
             _dbContext = dbContext;
         }

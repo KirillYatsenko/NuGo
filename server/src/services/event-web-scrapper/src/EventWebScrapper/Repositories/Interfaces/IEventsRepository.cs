@@ -5,7 +5,7 @@ using EventWebScrapper.Models;
 
 namespace EventWebScrapper.Repositories
 {
-    public interface IEventRepository
+    public interface IEventsRepository
     {
         Task<bool> AddAsync(Event eventInfo);
         Task<bool> AddRangeAsync(IEnumerable<Event> eventInfos);

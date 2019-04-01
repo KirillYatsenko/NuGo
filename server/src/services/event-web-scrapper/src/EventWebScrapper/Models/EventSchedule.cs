@@ -4,7 +4,7 @@ using MySql.Data.EntityFrameworkCore.DataAnnotations;
 
 namespace EventWebScrapper.Models
 {
-    public class EventDate
+    public class EventSchedule
     {
         [Key]
         public int Id { get; set; }

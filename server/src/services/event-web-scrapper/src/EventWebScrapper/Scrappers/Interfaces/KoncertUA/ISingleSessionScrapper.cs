@@ -6,6 +6,6 @@ namespace EventWebScrapper.Scrappers.KoncertUAScrappers
 {
     public interface ISingletSessionScrapper
     {
-        IEnumerable<EventDate> ScrapSession(HtmlNode performanceCard, HtmlNode performance, string placeName);
+        IEnumerable<EventSchedule> ScrapSession(HtmlNode performanceCard, HtmlNode performance, string placeName);
     }
 }

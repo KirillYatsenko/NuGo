@@ -5,40 +5,40 @@ using EventWebScrapper.Models;
 
 namespace EventWebScrapper.Repositories
 {
-    public class EventDateRepository : IEventDateRepository
+    public class EventsScheduleRepository : IEventsScheduleRepository
     {
         private readonly EventWebScrapperDbContext _dbContext;
 
-        public EventDateRepository(EventWebScrapperDbContext dbContext)
+        public EventsScheduleRepository(EventWebScrapperDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<bool> AddAsync(EventDate eventDate)
+        public async Task<bool> AddAsync(EventSchedule eventDate)
         {
-            var result = await _dbContext.EventDates.AddAsync(eventDate);
+            var result = await _dbContext.EventSchedules.AddAsync(eventDate);
             return await saveChangesAsync();
         }
 
-        public async Task<bool> AddRangeAsync(IEnumerable<EventDate> eventDates)
+        public async Task<bool> AddRangeAsync(IEnumerable<EventSchedule> eventDates)
         {
-            await _dbContext.EventDates.AddRangeAsync(eventDates);
+            await _dbContext.EventSchedules.AddRangeAsync(eventDates);
             return await saveChangesAsync();
         }
 
-        public IQueryable<EventDate> Get()
+        public IQueryable<EventSchedule> Get()
         {
-            return _dbContext.EventDates.AsQueryable();
+            return _dbContext.EventSchedules.AsQueryable();
         }
 
-        public async Task<EventDate> GetAsync(long id)
+        public async Task<EventSchedule> GetAsync(long id)
         {
-            return await _dbContext.EventDates.FindAsync(id);
+            return await _dbContext.EventSchedules.FindAsync(id);
         }
 
         public async Task<bool> RemoveAsync(long id)
         {
-            var scrapData = await _dbContext.EventDates.FindAsync(id);
+            var scrapData = await _dbContext.EventSchedules.FindAsync(id);
 
             if (scrapData == null)
             {
@@ -49,7 +49,7 @@ namespace EventWebScrapper.Repositories
             return await UpdateAsync(scrapData);
         }
 
-        public async Task<bool> RemoveRangeAsync(IEnumerable<EventDate> eventDates)
+        public async Task<bool> RemoveRangeAsync(IEnumerable<EventSchedule> eventDates)
         {
             foreach (var date in eventDates)
             {
@@ -59,13 +59,13 @@ namespace EventWebScrapper.Repositories
             return await UpdateRangeAsync(eventDates);
         }
 
-        public async Task<bool> UpdateAsync(EventDate eventDate)
+        public async Task<bool> UpdateAsync(EventSchedule eventDate)
         {
             var updatedScrapData = _dbContext.Update(eventDate);
             return await saveChangesAsync();
         }
 
-        public async Task<bool> UpdateRangeAsync(IEnumerable<EventDate> eventDates)
+        public async Task<bool> UpdateRangeAsync(IEnumerable<EventSchedule> eventDates)
         {
             _dbContext.UpdateRange(eventDates);
             return await saveChangesAsync();

@@ -12,17 +12,17 @@ namespace EventWebScrapper.Services
     public abstract class ScrapperService
     {
         private readonly IScrapper _scrapper;
-        private readonly IEventRepository _eventRepository;
-        private readonly IEventDateRepository _eventDateRepository;
+        private readonly IEventsRepository _eventRepository;
+        private readonly IEventsScheduleRepository _eventsScheduleRepository;
 
         public ScrapperService(
             IScrapper scrapper,
-            IEventRepository eventRepository,
-            IEventDateRepository eventDateRepository
+            IEventsRepository eventRepository,
+            IEventsScheduleRepository eventDateRepository
         )
         {
             _eventRepository = eventRepository;
-            _eventDateRepository = eventDateRepository;
+            _eventsScheduleRepository = eventDateRepository;
             _scrapper = scrapper;
         }
 
@@ -47,13 +47,13 @@ namespace EventWebScrapper.Services
                 return;
             }
 
-            var eventDates = _eventDateRepository.Get();
+            var eventDates = _eventsScheduleRepository.Get();
 
             var todayEventDates = await eventDates
                                     .Where(d => d.Date.Day == filterDay && d.Event.Id == eventToRemove.Id)
                                     .ToListAsync();
 
-            await _eventDateRepository.RemoveRangeAsync(todayEventDates);
+            await _eventsScheduleRepository.RemoveRangeAsync(todayEventDates);
             await _eventRepository.RemoveAsync(eventToRemove.Id);
         }
 

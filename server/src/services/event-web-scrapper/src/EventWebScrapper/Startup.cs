@@ -71,6 +71,7 @@ namespace EventWebScrapper
         {
             services.AddSingleton<IEventsScheduleRepository, IEventsScheduleRepository>();
             services.AddSingleton<IEventsRepository, EventsRepository>();
+            services.AddSingleton<IEventsCategoryRepository, EventsCategoryRepository>();
         }
 
         private void registerServices(IServiceCollection services)
@@ -87,6 +88,7 @@ namespace EventWebScrapper
             services.AddTransient<KoncertUaEventHandler>();
             services.AddTransient<ScrapKinoafishaEventHandler>();
             services.AddTransient<IEventService, EventService>();
+            services.AddTransient<IEventsCategoryService, EventsCategoryService>(); 
 
             services.AddTransient<ScrapingBrowser>(serviceProvider =>
             {

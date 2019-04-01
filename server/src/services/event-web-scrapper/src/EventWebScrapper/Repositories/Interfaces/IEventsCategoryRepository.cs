@@ -1,12 +1,13 @@
-using System.Collections.Generic;
+
 using System.Linq;
 using System.Threading.Tasks;
 using EventWebScrapper.Models;
 
-namespace EventWebScrapper.Services
+namespace EventWebScrapper.Repositories
 {
-    public interface IEventsCategoryService
+    public interface IEventsCategoryRepository
     {
         IQueryable<EventCategory> Get();
     }
+
 }

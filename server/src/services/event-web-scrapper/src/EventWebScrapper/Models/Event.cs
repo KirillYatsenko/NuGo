@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using MySql.Data.EntityFrameworkCore.DataAnnotations;
 
 namespace EventWebScrapper.Models
@@ -42,9 +43,13 @@ namespace EventWebScrapper.Models
         public string ImagePath { get; set; }
 
         public int CategoryId { get; set; }
+
         public EventCategory Category { get; set; }
 
         public List<EventSchedule> Schedules { get; set; }
+
+        [NotMapped]
+        public EventSchedule ClosestSchedule { get; set; }
 
         public decimal Rating { get; set; }
     }

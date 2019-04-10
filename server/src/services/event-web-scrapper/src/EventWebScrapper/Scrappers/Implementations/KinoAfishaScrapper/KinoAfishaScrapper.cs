@@ -90,7 +90,7 @@ namespace EventWebScrapper.Scrappers.KinoAfishaScrappers
         private string scrapFilmDescription(WebPage filmDetailsPage)
         {
             var description = "";
-            description = filmDetailsPage.Html.CssSelect(".description").FirstOrDefault()?.InnerText;
+            description = filmDetailsPage.Html.CssSelect(".description").FirstOrDefault()?.InnerHtml;
 
             return description;
         }

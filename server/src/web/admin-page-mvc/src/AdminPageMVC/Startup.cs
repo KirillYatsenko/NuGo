@@ -67,12 +67,14 @@ namespace AdminPageMVC
         private void registerServices(IServiceCollection services)
         {
             services.AddTransient<IEventsService,EventsService>();
+            services.AddTransient<IEventsCategoryService, EventCategoryService>();
         }
 
 
         private void registerHttpClients(IServiceCollection services)
         {
             services.AddHttpClient<IEventsService,EventsService>();
+            services.AddHttpClient<IEventsCategoryService, EventCategoryService>();
         }
 
     }

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AdminPageMVC.Models;
+using AdminPageMVC.ViewModels;
 using Microsoft.Extensions.Configuration;
 
 namespace AdminPageMVC.Services
 {
-    public class EventsService: IEventsService
+    public class EventsService : IEventsService
     {
         private readonly HttpClient _httpClient;
         private readonly string _scrapperApiUrl;
@@ -23,7 +23,7 @@ namespace AdminPageMVC.Services
             }
         }
 
-        public async Task<IEnumerable<Event>> GetAsync()
+        public async Task<IEnumerable<Event>> GetRelevantAsync()
         {
             var url = $"{_scrapperApiUrl}/events";
 
@@ -34,12 +34,27 @@ namespace AdminPageMVC.Services
                 return await getResult.Content.ReadAsAsync<IEnumerable<Event>>();
             }
 
-            throw new HttpRequestException("Failed to GET events");
+            throw new HttpRequestException("Failed to GET relevant events");
+        }
+
+        public async Task<IEnumerable<Event>> GetHistoryAsync()
+        {
+                
+            var url = $"{_scrapperApiUrl}/events/history";
+
+            var getResult = await _httpClient.GetAsync(url);
+
+            if (getResult.IsSuccessStatusCode)
+            {
+                return await getResult.Content.ReadAsAsync<IEnumerable<Event>>();
+            }
+
+            throw new HttpRequestException("Failed to GET old events");
         }
 
         public async Task<Event> GetAsync(long id)
         {
-            var url = $"{_scrapperApiUrl}/event/{id}";
+            var url = $"{_scrapperApiUrl}/events/{id}";
 
             var getResult = await _httpClient.GetAsync(url);
 
@@ -48,7 +63,7 @@ namespace AdminPageMVC.Services
                 return await getResult.Content.ReadAsAsync<Event>();
             }
 
-            throw new HttpRequestException("Failed to GET events");
+            throw new HttpRequestException("Failed to GET event");
         }
 
     }

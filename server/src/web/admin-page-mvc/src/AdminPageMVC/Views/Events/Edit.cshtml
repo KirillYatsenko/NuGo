@@ -1,0 +1,65 @@
+@model Event
+
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<h2>Edit</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()    
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Title)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Rating, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Rating, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Rating)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CategoryId, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model=>model.CategoryId,new SelectList(Model.AllCategories, "Id","Name"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CategoryId)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.DetailsUrl, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+               @Html.EditorFor(model => model.DetailsUrl, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DetailsUrl)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <span>
+                    @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
+                    <!-- @Model.Description -->
+                </span>
+                <!-- @Html.TextAreaFor(model => model.Description,  new { @class = "form-control", rows = 10 } ) -->
+                @Html.ValidationMessageFor(model => model.Description)
+            </div>
+        </div>
+        @*Genre and Price removed for brevity.*@        
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

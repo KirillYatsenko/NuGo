@@ -8,7 +8,6 @@ namespace EventWebScrapper.Models
     {
         [Key]
         public int Id { get; set; }
-
         public Event Event { get; set; }
 
         public PriceInfo Price { get; set; }

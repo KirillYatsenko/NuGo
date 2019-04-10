@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventWebScrapper.Enums;
@@ -31,38 +32,45 @@ namespace EventWebScrapper.Services
             var todaysDay = DateTime.UtcNow.Day;
             var scrappedEvents = await _scrapper.Scrap(category);
 
+            var uniqueEvents = scrappedEvents.ToList();
+
             foreach (var scrappedEvent in scrappedEvents)
             {
                 var existingEvent = await checkEventExists(scrappedEvent);
-                await removeExistingEvent(existingEvent, todaysDay);
+
+                if (await addNewSchedules(existingEvent, scrappedEvent.Schedules))
+                {
+                    uniqueEvents.Remove(scrappedEvent);
+                }
             }
 
             return await this._eventRepository.AddRangeAsync(scrappedEvents);
         }
 
-        private async Task removeExistingEvent(Event eventToRemove, int filterDay)
-        {
-            if (eventToRemove == null)
-            {
-                return;
-            }
-
-            var eventDates = _eventsScheduleRepository.Get();
-
-            var todayEventDates = await eventDates
-                                    .Where(d => d.Date.Day == filterDay && d.Event.Id == eventToRemove.Id)
-                                    .ToListAsync();
-
-            await _eventsScheduleRepository.RemoveRangeAsync(todayEventDates);
-            await _eventRepository.RemoveAsync(eventToRemove.Id);
-        }
-
         private async Task<Event> checkEventExists(Event eventInfo)
         {
             var events = _eventRepository.Get();
-            var eventAlreadyExists = await events.FirstOrDefaultAsync(e => e.Title == eventInfo.Title);
+            var existedEvent = await events.FirstOrDefaultAsync(e => e.Title == eventInfo.Title);
 
-            return eventAlreadyExists;
+            return existedEvent;
+        }
+
+        private async Task<bool> addNewSchedules(Event existingEvent, List<EventSchedule> newSchedules)
+        {
+            if (existingEvent == null)
+            {
+                return false;
+            }
+
+            foreach (var schedule in newSchedules)
+            {
+                if (!existingEvent.Schedules.Exists(sch => sch.Date != schedule.Date))
+                {
+                    existingEvent.Schedules.Add(schedule);
+                }
+            }
+
+            return await _eventRepository.UpdateAsync(existingEvent);
         }
 
     }

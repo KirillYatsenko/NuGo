@@ -13,7 +13,7 @@ namespace EventWebScrapper.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.1-servicing-10028");
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
 
             modelBuilder.Entity("EventWebScrapper.Models.Event", b =>
                 {
@@ -78,7 +78,7 @@ namespace EventWebScrapper.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EventWebScrapper.Models.EventDate", b =>
+            modelBuilder.Entity("EventWebScrapper.Models.EventSchedule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -99,7 +99,7 @@ namespace EventWebScrapper.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EventDates");
+                    b.ToTable("EventSchedules");
                 });
 
             modelBuilder.Entity("EventWebScrapper.Models.PriceInfo", b =>
@@ -132,16 +132,16 @@ namespace EventWebScrapper.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("EventWebScrapper.Models.EventDate", b =>
+            modelBuilder.Entity("EventWebScrapper.Models.EventSchedule", b =>
                 {
                     b.HasOne("EventWebScrapper.Models.Event", "Event")
-                        .WithMany("Dates")
+                        .WithMany("Schedules")
                         .HasForeignKey("EventId");
                 });
 
             modelBuilder.Entity("EventWebScrapper.Models.PriceInfo", b =>
                 {
-                    b.HasOne("EventWebScrapper.Models.EventDate", "EventDate")
+                    b.HasOne("EventWebScrapper.Models.EventSchedule", "Schedule")
                         .WithOne("Price")
                         .HasForeignKey("EventWebScrapper.Models.PriceInfo", "EventDateId")
                         .OnDelete(DeleteBehavior.Cascade);

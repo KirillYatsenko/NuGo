@@ -17,9 +17,16 @@ namespace EventWebScrapper
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetRelevant()
         {
-            var events = await _eventService.Get().ToListAsync();
+            var events = await _eventService.GetRelevantAsync();
+            return new OkObjectResult(events);
+        }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetOld()
+        {
+            var events = await _eventService.GetHistoryAsync().ToListAsync();
             return new OkObjectResult(events);
         }
 

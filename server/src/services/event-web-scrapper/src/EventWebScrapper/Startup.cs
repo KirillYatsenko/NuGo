@@ -40,7 +40,10 @@ namespace EventWebScrapper
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = 
+                                        Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             registerRepositories(services);
             registerDbContext(services);
@@ -69,7 +72,7 @@ namespace EventWebScrapper
 
         private void registerRepositories(IServiceCollection services)
         {
-            services.AddSingleton<IEventsScheduleRepository, IEventsScheduleRepository>();
+            services.AddSingleton<IEventsScheduleRepository, EventsScheduleRepository>();
             services.AddSingleton<IEventsRepository, EventsRepository>();
             services.AddSingleton<IEventsCategoryRepository, EventsCategoryRepository>();
         }
@@ -89,6 +92,8 @@ namespace EventWebScrapper
             services.AddTransient<ScrapKinoafishaEventHandler>();
             services.AddTransient<IEventService, EventService>();
             services.AddTransient<IEventsCategoryService, EventsCategoryService>(); 
+            services.AddTransient<ISchedulesService, SchedulesService>(); 
+            services.AddTransient<IEventScheduler, EventScheduler>();
 
             services.AddTransient<ScrapingBrowser>(serviceProvider =>
             {

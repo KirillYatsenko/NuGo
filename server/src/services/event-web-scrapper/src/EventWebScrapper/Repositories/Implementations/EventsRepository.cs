@@ -34,6 +34,14 @@ namespace EventWebScrapper.Repositories
                     .AsQueryable();
         }
 
+        public IQueryable<Event> GetWithSchedules()
+        {
+            return _dbContext.Events
+                    .Include(@event => @event.Schedules)
+                    .Include(@event => @event.Category)
+                    .AsQueryable();
+        }
+
         public async Task<Event> GetAsync(long id)
         {
             return await _dbContext.Events.FindAsync(id);

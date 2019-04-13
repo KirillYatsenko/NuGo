@@ -10,6 +10,7 @@ namespace EventWebScrapper.Repositories
         Task<bool> AddAsync(Event eventInfo);
         Task<bool> AddRangeAsync(IEnumerable<Event> eventInfos);
         IQueryable<Event> Get();
+        IQueryable<Event> GetWithSchedules();
         Task<Event> GetAsync(long id);
         Task<bool> UpdateAsync(Event eventInfo);
         Task<bool> RemoveAsync(long id);

@@ -31,25 +31,26 @@ namespace EventWebScrapper.Services
         {
             var todaysDay = DateTime.UtcNow.Day;
             var scrappedEvents = await _scrapper.Scrap(category);
+            var newEvents = scrappedEvents.ToList();
 
             var uniqueEvents = scrappedEvents.ToList();
 
             foreach (var scrappedEvent in scrappedEvents)
             {
-                var existingEvent = await checkEventExists(scrappedEvent);
+                var existingEvent = await checkEventExistsByTitle(scrappedEvent);
 
                 if (await addNewSchedules(existingEvent, scrappedEvent.Schedules))
                 {
-                    uniqueEvents.Remove(scrappedEvent);
+                    newEvents.Remove(scrappedEvent);
                 }
             }
 
-            return await this._eventRepository.AddRangeAsync(scrappedEvents);
+            return await this._eventRepository.AddRangeAsync(newEvents);
         }
 
-        private async Task<Event> checkEventExists(Event eventInfo)
+        private async Task<Event> checkEventExistsByTitle(Event eventInfo)
         {
-            var events = _eventRepository.Get();
+            var events = _eventRepository.GetWithSchedules();
             var existedEvent = await events.FirstOrDefaultAsync(e => e.Title == eventInfo.Title);
 
             return existedEvent;
@@ -62,8 +63,8 @@ namespace EventWebScrapper.Services
                 return false;
             }
 
-            foreach (var schedule in newSchedules)
-            {
+                foreach (var schedule in newSchedules)
+                {
                 if (!existingEvent.Schedules.Exists(sch => sch.Date != schedule.Date))
                 {
                     existingEvent.Schedules.Add(schedule);

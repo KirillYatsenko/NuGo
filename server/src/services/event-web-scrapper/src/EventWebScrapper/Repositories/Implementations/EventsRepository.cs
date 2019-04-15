@@ -44,7 +44,10 @@ namespace EventWebScrapper.Repositories
 
         public async Task<Event> GetAsync(long id)
         {
-            return await _dbContext.Events.FindAsync(id);
+            return await _dbContext.Events
+                          .Include(@event => @event.Schedules)
+                          .Include(@event => @event.Category)
+                          .FirstAsync(@event => @event.Id == id);
         }
 
         public async Task<bool> RemoveAsync(long id)

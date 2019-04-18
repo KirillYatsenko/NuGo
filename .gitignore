@@ -1,2 +1,4 @@
 server/src/services/event-web-scrapper/src/EventWebScrapper.Tests/lcov.info
 server/src/services/event-web-scrapper/src/EventWebScrapper/EventsImages/*
+server/src/gateways/admin-page/Admin Page.code-workspace
+clients/src/Admin Page UI.code-workspace

@@ -10,25 +10,37 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
 
 namespace AdminPageGateway
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            configureCORS(services);
+
+            services.AddOcelot(Configuration);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        private void configureCORS(IServiceCollection services)
+        {
+            services.AddCors(options =>
+             {
+                 options.AddPolicy("AllowAnyOrigin",
+                 builder => builder.AllowAnyOrigin().AllowAnyMethod());
+             });
+        }
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -43,6 +55,9 @@ namespace AdminPageGateway
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseCors("AllowAnyOrigin");
+
+            app.UseOcelot().Wait();
         }
     }
 }

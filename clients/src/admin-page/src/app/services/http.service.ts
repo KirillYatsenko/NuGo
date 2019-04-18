@@ -10,7 +10,7 @@ export class HttpService {
   constructor(private http: HttpClient) { }
 
   public get<T>(url: string): Observable<T> {
-    return this.http.get<T>(url);
+    return this.http.get<T>("http://localhost:5000/api/" + url);
   }
 
   // private getRequestOptionArgs(options?: RequestOptionsArgs): RequestOptionsArgs {

@@ -4,10 +4,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpService } from './http.service';
 
 @NgModule({
-  declarations: [HttpService],
   imports: [
     CommonModule,
     HttpClientModule
-  ]
+  ],
+  providers: [HttpService ]
 })
 export class ServicesModule { }

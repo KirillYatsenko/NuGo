@@ -12,4 +12,8 @@ export class EventsService {
   public getEvents(): Observable<ScrappedEvent[]>{
     return this.http.get<ScrappedEvent[]>("events")
   }
+
+  public getEventsHistory(): Observable<ScrappedEvent[]>{
+    return this.http.get<ScrappedEvent[]>("events/history")
+  }
 }

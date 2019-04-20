@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { EventsComponent } from './routes/events/events.component';
 import { RoutesModule } from './routes/routes.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -13,8 +13,10 @@ import { RoutesModule } from './routes/routes.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    RoutesModule
+    RoutesModule,
+    SharedModule
   ],
+  schemas: [ ],
   providers: [],
   bootstrap: [AppComponent]
 })

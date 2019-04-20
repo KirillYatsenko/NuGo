@@ -2,3 +2,14 @@ server/src/services/event-web-scrapper/src/EventWebScrapper.Tests/lcov.info
 server/src/services/event-web-scrapper/src/EventWebScrapper/EventsImages/*
 server/src/gateways/admin-page/Admin Page.code-workspace
 clients/src/Admin Page UI.code-workspace
+clients/src/admin-page/src/app/shared/loader/loader.component.ts
+clients/src/admin-page/angular.json
+clients/src/admin-page/package.json
+clients/src/admin-page/src/app/app.module.ts
+clients/src/admin-page/src/app/routes/routes.module.ts
+clients/src/admin-page/src/app/routes/events/events.component.html
+clients/src/admin-page/src/app/routes/events/events.component.scss
+clients/src/admin-page/src/app/routes/events/events.component.ts
+clients/src/admin-page/src/app/shared/shared.module.ts
+clients/src/admin-page/src/app/shared/loader/loader.component.html
+clients/src/admin-page/src/app/shared/loader/loader.component.scss

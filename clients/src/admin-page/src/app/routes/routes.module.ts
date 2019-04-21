@@ -4,6 +4,7 @@ import { EventsComponent } from './events/events.component';
 import { ServicesModule } from '../services/services.module';
 import { SharedModule } from '../shared/shared.module';
 import { DataTablesModule } from 'angular-datatables';
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { DataTablesModule } from 'angular-datatables';
     CommonModule,
     ServicesModule,
     SharedModule,
-    DataTablesModule
+    DataTablesModule,
+    MDBBootstrapModule.forRoot()
   ],
   exports:[
     EventsComponent

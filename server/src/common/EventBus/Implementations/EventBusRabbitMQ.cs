@@ -13,14 +13,17 @@ namespace EventBus.Implementations
 {
     public class EventBusRabbitMQ : IEventBus
     {
+        private readonly IRabbitmqConfiguration _configuration;
         private readonly ConnectionFactory _factory;
         private readonly ILifetimeScope _autofacScope;
         private const string SCOPE_NAME = "event_bus";
 
-        public EventBusRabbitMQ(ILifetimeScope scope)
+        public EventBusRabbitMQ(ILifetimeScope scope, IRabbitmqConfiguration configuration)
         {
             _autofacScope = scope;
-            _factory = new ConnectionFactory() { HostName = "localhost" };
+            _configuration = configuration;
+
+            _factory = new ConnectionFactory() { HostName = configuration.Hostname };
         }
 
         public void Publish(string exchangeName, string routingKey, object message)

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using EventBus.Abstracts;
 using EventBus.Implementations;
 using EventWebScrapper.EventHandlers;
 using EventWebScrapper.IntegrationEvents;
-using EventWebScrapper.Models;
 using EventWebScrapper.Repositories;
 using EventWebScrapper.Scrappers;
 using EventWebScrapper.Scrappers.KinoAfishaScrappers;
@@ -18,13 +14,10 @@ using EventWebScrapper.Scrappers.KoncertUAScrappers;
 using EventWebScrapper.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ScrapySharp.Network;
 
 namespace EventWebScrapper
@@ -120,11 +113,15 @@ namespace EventWebScrapper
 
         private void registerEventBus(IServiceCollection services)
         {
+            var rabbitmqConfig = new RabbitmqConfiguration(); 
+            Configuration.Bind("Rabbitmq", rabbitmqConfig);
+            services.AddSingleton(rabbitmqConfig);
+
             services.AddSingleton<IEventBus, EventBusRabbitMQ>(serviceProvider =>
             {
                 var iLifetimeScope = serviceProvider.GetRequiredService<ILifetimeScope>();
 
-                return new EventBusRabbitMQ(iLifetimeScope);
+                return new EventBusRabbitMQ(iLifetimeScope, rabbitmqConfig);
             });
         }
 
